@@ -53,6 +53,7 @@ public:
     int   mMouseButton, mMouseState;
 
     std::vector<float> cameraScale = { 100, 100, 100 };
+    std::vector<float> lightPosition = { 0,1, 1 };
     float cameraRotation = 0;
     float maxDistanceFromOrigin = 1000;
 

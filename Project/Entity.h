@@ -56,6 +56,7 @@ public:
 	void Rotate(float i, int axis);
 
 	void Draw();
+	void DrawSphere();
 };
 
 #endif

@@ -46,9 +46,9 @@ void Game::InitGFX() {
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     //---------------------------------------
 
-    GLfloat ambient[] = { 0.3, 0.3, 0.3, 1.0 };
-    GLfloat diffuse[] = { 0.8, 0.8, 0.8, 1.0 };
-    GLfloat position[] = { 2.0, 2.0, 2.0, 0.0 };
+    GLfloat ambient[] = { -0.2, -0.2, -0.2, 1 };
+    GLfloat diffuse[] = { 0.4, 0.4, 0.4, 1 };
+    GLfloat position[] = { lightPosition[0], lightPosition[1], lightPosition[2], 0 };
 
     GLfloat front_mat_shininess[] = { 60.0 };
     GLfloat front_mat_specular[] = { 0.2, 0.2, 0.2, 1.0 };
@@ -149,8 +149,10 @@ void Game::Draw(void) {
 
     if (debug) {DrawGrid();}
     playerShip.Draw();
+    glEnable(GL_LIGHTING);
     asteroid.Draw();
 
+    glDisable(GL_LIGHTING);
     DrawHUD();
 	//--------------------------------------------	
     mCounter++;
@@ -172,7 +174,7 @@ void Game::DrawGrid()
 
     //-----------------------Origin
     glColor3ub(32, 32, 32);
-    gluSphere(mQuadratic, .02, 32, 32); 
+    gluSphere(mQuadratic, 5, 32, 32); 
     //-----------------------x-axis
     glColor3ub(255, 0, 0);
     glPushMatrix();

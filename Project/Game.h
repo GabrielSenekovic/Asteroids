@@ -9,6 +9,8 @@
 #include <SDL_opengl.h>
 #include <gl/glu.h>
 #include "Entity.h"
+#include "Player.h"
+#include "Body.h"
 #include <string>
 #include <iostream>
 #include "MatrixMath.h"
@@ -33,8 +35,8 @@ public:
     void  Update();
     //-------------------------------------------------------
     void  Draw();
-    void DrawGrid();
-    void DrawHUD();
+    void  DrawGrid();
+    void  DrawHUD();
     //-------------------------------------------------------
     void  NormalKeys(unsigned char key, int state);
     void  SpecialKeys(int key, int state);
@@ -67,8 +69,8 @@ public:
     //-------------------------------------------------------
     char  (*mMtxFont)[7][5];
     //-------------------------------------------------------
-    Entity playerShip;
-    Entity asteroid;
+    Player playerShip;
+    Body asteroid;
 };
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------

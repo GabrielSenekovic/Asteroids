@@ -44,10 +44,9 @@ void Game::KeyHeld()
 
             case SDLK_w: playerShip.Move(1); break;
             case SDLK_s: playerShip.Move(-1); break;
-            case SDLK_a: playerShip.Rotate(1, 2); cameraRotation += playerShip.turnSpeed;
-                break;
-            case SDLK_d: playerShip.Rotate(-1, 2);  cameraRotation -= playerShip.turnSpeed;
-                break;
+            case SDLK_a: playerShip.Rotate(1, 1); cameraRotation += playerShip.turnSpeed;break;
+            case SDLK_d: playerShip.Rotate(-1, 1);  cameraRotation -= playerShip.turnSpeed;break;
+            case SDLK_SPACE: playerShip.Shoot(); break;
 
             case SDLK_UP: playerShip.Move(1); break;
             case SDLK_DOWN: playerShip.Move(-1); break;

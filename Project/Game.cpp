@@ -10,12 +10,12 @@
 #include "Game.h"
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------
-Game::Game(): playerShip(Entity::EntityType::Ship), asteroid(Entity::EntityType::ImperfectSphere)
+Game::Game(): playerShip(), asteroid(Entity::EntityType::ImperfectSphere, 10, 10)
 {
 	mMtxFont = new char[128][7][5];
 	InitMtxFont();
 	mCounter = 0;
-	mW = 1280, mH = 720.f;
+ 	mW = 1280, mH = 720.f;
 	mMouseX = mMouseY = 0;
     mMouseButton = mMouseState = 0;
     mQuadratic = gluNewQuadric();

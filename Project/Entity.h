@@ -16,47 +16,52 @@ class Entity
 public:
 	enum class EntityType
 	{
-		Ship,
+		PlayerShip,
 		PerfectSphere,
-		ImperfectSphere
+		ImperfectSphere,
+		Laser
 	};
 	std::vector<float> position;
 	std::vector<float> direction;
-	float turnSpeed;
+
+	float turnSpeed; float rotationAngle = 0;
 	float acc = 0;
 	int life;
+	bool active = true;
+	std::vector<float> velocity;
+	float speed;
 
-private:
+protected:
+
+	struct Face
+	{
+		std::vector<std::vector<float>*> vertex; //list of vectors 
+		std::vector<float> normal;
+		int drawMethod;
+		std::vector<int> color;
+
+		Face(std::vector<std::vector<float>*>& a, std::vector<int>& color, int drawMethod);
+	};
+
 	std::vector<std::vector<float>> vertex;
-	std::vector<int> color;
+	std::vector<Face> faces;
 
 	float scale;
-	int drawMethod;
-
-	float speed;
-	std::vector<float> velocity;
-	float accForce; int accCap = 50;
-
-	int stacks;
-	int sectors;
 
 	EntityType type;
 
 	std::random_device rd;
 
 public:
+	Entity();
 	Entity(EntityType type);
-	void BuildSphere();
+	virtual void Build();
 
-	void UpdateVelocity();
-
-	void Update(float dt);
+	void Update(float dt); virtual void OnUpdate(float dt);
 	void CheckWorldBounds(int i);
-	void Move(float i);
-	void Rotate(float i, int axis);
+	virtual void Rotate(float i, int axis);
 
-	void Draw();
-	void DrawSphere();
+	virtual void Draw();
 };
 
 #endif

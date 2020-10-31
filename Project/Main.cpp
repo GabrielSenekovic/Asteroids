@@ -90,7 +90,7 @@ int main(int argc, char *argv[]){
 	createSurface();
 	G.InitGFX();
 	G.ChangeSize(G.mW, G.mH);
-	glClearColor(0.f,0.f,0.2f,1.f);
+	glClearColor(0.f,0.f,0.f,1.f);
 	mainLoop();
 	return 0;
 }

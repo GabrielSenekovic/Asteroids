@@ -39,15 +39,15 @@ protected:
 
 	struct Face
 	{
-		std::vector<std::array<float, 3>*> vertex; //list of vectors 
-		std::vector<float> normal;
+		std::vector<std::array<float, 3>*> vertices; //list of vectors 
+		std::array<float,3> normal;
 		int drawMethod;
 		std::vector<int> color;
 
-		Face(std::vector<std::array<float, 3>*>& a, std::vector<int>& color, int drawMethod);
+		Face(std::vector<std::array<float, 3>*> a, std::vector<int>& color, int drawMethod);
 	};
 
-	std::vector<std::array<float, 3>> vertex;
+	std::vector<std::array<float, 3>> vertices;
 	std::vector<Face> faces;
 
 	float invincibilityFrame = 20;
@@ -71,6 +71,10 @@ public:
 	std::array<float, 3> GetValidStartPosition();
 
 	bool IsVulnerable();
+
+	void ResetMovement();
+
+	virtual void AddToEntitiesList(std::vector<Entity*>& entities);
 
 	virtual void OnCollide(Entity& other);
 	virtual void TakeDamage(const int& damage);

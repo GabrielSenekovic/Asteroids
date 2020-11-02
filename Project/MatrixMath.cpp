@@ -2,7 +2,7 @@
 
 float MMath::Magnitude(std::array<float,3> a, int b) //b is the length of the vector
 {
-	int c = 0;
+	float c = 0;
 	for (int i = 0; i < b; i++)
 	{
 		c += pow(a[i], 2);

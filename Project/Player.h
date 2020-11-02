@@ -12,7 +12,7 @@ public:
 	bool OnUpdate(float dt) override;
 
 	void Move(float i);
-	void Reset();
+	void ResetMovement();
 
 	void TakeDamage(const int& damage) override;
 };

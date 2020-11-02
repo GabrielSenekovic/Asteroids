@@ -31,13 +31,15 @@ void Projectile::RotateStart(float i, int axis)
 	rotationAngle = i;
 	std::vector<float> R = MMath::GetRotationMatrix(1, i);
 	direction = MMath::MatrixMultiplication(direction, R, 1, 3);
-	for (int i = 0; i < vertex.size(); i++)
+	for (int i = 0; i < vertices.size(); i++)
 	{
-		vertex[i] = MMath::MatrixMultiplication(vertex[i], R, 1, 3);
+		vertices[i] = MMath::MatrixMultiplication(vertices[i], R, 1, 3);
 	}
 }
 void Projectile::Draw()
 {
+	glDisable(GL_LIGHTING);
 	glLineWidth(5);
 	Entity::Draw();
+	glEnable(GL_LIGHTING);
 }

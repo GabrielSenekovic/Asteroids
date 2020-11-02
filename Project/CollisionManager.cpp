@@ -24,7 +24,7 @@ bool CollisionManager::CheckCollision(const Entity* a, const Entity* b)
 bool CollisionManager::SphereVSSphere(const SphereCollider* a, const SphereCollider* b)
 {
 	float distance = MMath::Magnitude(MMath::MatrixSubtraction(a->position, b->position), 3);
-	return distance < a->r + b->r;
+	return distance < a->r * a->scale + b->r * b->scale;
 }
 bool CollisionManager::SphereVSLine(const SphereCollider* a, const LineCollider* b, const std::array<float, 3>& direction)
 {

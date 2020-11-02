@@ -1,8 +1,15 @@
 #include "Entity.h"
 
-Entity::Face::Face(std::vector<std::array<float, 3>*>& a, std::vector<int>& color, int drawMethod): 
-	vertex(a), drawMethod(drawMethod), color(color)
+Entity::Face::Face(std::vector<std::array<float, 3>*> a, std::vector<int>& color, int drawMethod) :
+	vertices(a), drawMethod(drawMethod), color(color)
 {
+	if (vertices.size() > 2)
+	{
+		std::array<float, 3> temp1 = MMath::MatrixSubtraction(*vertices[0], *vertices[1]);
+		std::array<float, 3> temp2 = MMath::MatrixSubtraction(*vertices[1], *vertices[2]);
+		std::array<float, 3> cross = Cross(temp1, temp2);
+		normal = Normalize(Cross(temp1, temp2)); 
+	}
 }
 
 Entity::Entity()
@@ -48,20 +55,21 @@ Entity::Entity(EntityType type_in)
 		scale = 1;
 		position = GetValidStartPosition();
 		speed = rand() % 3 + 2;
-		turnSpeed = 0;
+		turnSpeed = 2;
 		acc = 1;
 		life = 1;
+		invincibilityFrameLimit = 2;
 		break;
-		case EntityType::Laser:
+	case EntityType::Laser:
 		{
 			active = false;
 			scale = 1;
 			speed = 200;
-			vertex.push_back({ 0, 0, 0 });
-			vertex.push_back({ 0, 0, 20 });
+			vertices.push_back({ 0, 0, 0 });
+			vertices.push_back({ 0, 0, 20 });
 			position = { 0,0,0 };
 			velocity = { 0,0,0 };
-			std::vector<std::array<float, 3>*> temp = { &vertex[0],&vertex[1]};
+			std::vector<std::array<float, 3>*> temp = { &vertices[0],&vertices[1]};
 			std::vector<int> color = { 100, 255, 255 };
 			faces.push_back(Face(temp, color, GL_LINE_STRIP));
 			acc = 1;
@@ -94,9 +102,9 @@ bool Entity::OnUpdate(float dt)
 
 void Entity::CheckWorldBounds(int i)
 {
-	for (int j = 0; j < vertex.size(); j++)
+	for (int j = 0; j < vertices.size(); j++)
 	{
-		std::array<float, 3> temp = vertex[j];
+		std::array<float, 3> temp = vertices[j];
 		for (int k = 0; k < 3; k++)
 		{
 			temp[k] += position[k];
@@ -130,6 +138,12 @@ std::array<float,3> Entity::GetValidStartPosition()
 
 void Entity::Rotate(float i, int axis)
 {
+	float j = turnSpeed * i; rotationAngle += j;
+
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		vertices[i] = MMath::MatrixMultiplication(vertices[i], MMath::GetRotationMatrix(axis, j), 1, 3);
+	}
 }
 
 bool Entity::IsVulnerable()
@@ -143,19 +157,22 @@ void Entity::Draw()
 
 	for (int i = 0; i < faces.size(); i++)
 	{
+		//going through all faces of the model
 		glBegin(faces[i].drawMethod);
 		(int)invincibilityFrame % 2 == 0 && !IsVulnerable() ? Color(masterColor) : Color(faces[i].color);
-		for (int j = 0; j < faces[i].vertex.size(); j++)
+		glNormal3f(faces[i].normal[0], faces[i].normal[1], faces[i].normal[2]);
+		for (int j = 0; j < faces[i].vertices.size(); j++)
 		{
-			std::array<float, 3> temp = *faces[i].vertex[j]; //Get vertices from the face
+			//going through all vector3 and vector 4 of the face
+			std::array<float, 3> temp = *faces[i].vertices[j]; //Get vertices from the face
 			for (int k = 0; k < temp.size(); k++)
 			{
 				temp[k] = temp[k] * scale + position[k]; //Move all variables of the vertex
 			}
 			glVertex3f(temp[0], temp[1], temp[2]);
 		}
+		glEnd();
 	}
-	glEnd();
 }
 void Entity::OnCollide(Entity& other)
 {
@@ -167,4 +184,13 @@ void Entity::TakeDamage(const int& damage)
 	life -= damage;
 	active = life > 0;
 	invincibilityFrame = 0;
+}
+void Entity::AddToEntitiesList(std::vector<Entity*>& entities)
+{
+
+}
+
+void Entity::ResetMovement()
+{
+	velocity = { (float)(rand() % 40 - 20), 0, (float)(rand() % 40 - 20) };
 }

@@ -76,6 +76,7 @@ public:
     Player playerShip;
 
     std::vector<Entity*> entities;
+    std::array<std::array<float, 3>, 4> cameraNormals;
 };
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------

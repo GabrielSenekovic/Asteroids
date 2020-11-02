@@ -22,6 +22,28 @@ Game::Game(): playerShip()
     gluQuadricNormals(mQuadratic, GLU_SMOOTH);
     timeLastFrame = 0;
 
+    double fov = 30, dnear = .1, dfar = 2500.;
+    double ratio = double(mW) / double(mH);
+
+    float hh = std::tan(fov / 2) * dnear;
+    float hw = hh * ratio;
+    std::array<float, 3> nw = { -hw, hh, 1 };
+    std::array<float, 3> ne = { hw, hh, 1 };
+    std::array<float, 3> se = { hw, -hh, 1 };
+    std::array<float, 3> sw = { -hw, -hh, 1 };
+    nw = MMath::Normalize(nw);
+    ne = MMath::Normalize(ne);
+    se = MMath::Normalize(se);
+    sw = MMath::Normalize(sw);
+
+    std::array<float, 3> topc = MMath::Cross(nw, ne);
+    std::array<float, 3> top = MMath::Normalize(topc);
+    std::array<float, 3> right = MMath::Normalize(MMath::Cross(ne, se));
+    std::array<float, 3> bottom = MMath::Normalize(MMath::Cross(se, sw));
+    std::array<float, 3> left = MMath::Normalize(MMath::Cross(sw, nw));
+
+    cameraNormals = { top, right, bottom, left };
+
     entities.push_back(&playerShip);
     for (int i = 0; i < playerShip.projectiles.size(); i++)
     {
@@ -29,7 +51,8 @@ Game::Game(): playerShip()
     }
     for (int i = 0; i < 20; i++)
     {
-        entities.push_back(new Body(Entity::EntityType::ImperfectSphere, 10, 10));
+        entities.push_back(new Asteroid(2));
+        entities.back()->AddToEntitiesList(entities);
     }
 }
 //---------------------------------------------------------------------
@@ -177,10 +200,21 @@ void Game::Draw(void) {
     glPointSize(10);
 
     if (debug) {DrawGrid();}
+    glEnable(GL_LIGHTING);
     for (int i = 0; i < entities.size(); i++)
     {
+        if (!entities[i]->active) { continue; }
+        /*bool culling = false;
+        for (int j = 0; j < 4; j++)
+        {
+            float dot = MMath::Dot(entities[i]->position, cameraNormals[j]);
+            culling = dot > 0;
+            if (culling) { break; }
+        }
+        if (culling) { continue; }*/
         entities[i]->Draw();
     }
+    glDisable(GL_LIGHTING);
     DrawHUD();
 	//--------------------------------------------	
     mCounter++;

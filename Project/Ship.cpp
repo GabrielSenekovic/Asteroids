@@ -30,9 +30,9 @@ void Ship::Rotate(float i, int axis)
 	std::vector<float> R = MMath::GetRotationMatrix(axis, j);
 	direction = MMath::MatrixMultiplication(direction, R, 1, 3);
 	UpdateVelocity();
-	for (int i = 0; i < vertex.size(); i++)
+	for (int i = 0; i < vertices.size(); i++)
 	{
-		vertex[i] = MMath::MatrixMultiplication(vertex[i], R, 1, 3);
+		vertices[i] = MMath::MatrixMultiplication(vertices[i], R, 1, 3);
 	}
 }
 void Ship::UpdateVelocity()

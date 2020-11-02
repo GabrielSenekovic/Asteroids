@@ -5,6 +5,7 @@
 
 struct Collider
 {
+	float scale = 1;
 	std::array<float, 3> position;
 	enum COLLIDER_TYPE
 	{

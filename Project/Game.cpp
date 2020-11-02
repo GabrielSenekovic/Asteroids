@@ -23,10 +23,13 @@ Game::Game(): playerShip()
     timeLastFrame = 0;
 
     entities.push_back(&playerShip);
-    entities.push_back(new Body(Entity::EntityType::ImperfectSphere, 10, 10));
     for (int i = 0; i < playerShip.projectiles.size(); i++)
     {
         entities.push_back(&playerShip.projectiles[i]);
+    }
+    for (int i = 0; i < 20; i++)
+    {
+        entities.push_back(new Body(Entity::EntityType::ImperfectSphere, 10, 10));
     }
 }
 //---------------------------------------------------------------------
@@ -174,11 +177,10 @@ void Game::Draw(void) {
     glPointSize(10);
 
     if (debug) {DrawGrid();}
-    playerShip.Draw();
-    glEnable(GL_LIGHTING);
-    entities[1]->Draw();
-
-    glDisable(GL_LIGHTING);
+    for (int i = 0; i < entities.size(); i++)
+    {
+        entities[i]->Draw();
+    }
     DrawHUD();
 	//--------------------------------------------	
     mCounter++;

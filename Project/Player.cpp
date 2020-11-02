@@ -44,6 +44,7 @@ void Player::Reset()
 {
 	position = { 0,0,0 };
 	acc = 0;
+	invincibilityFrame = 0;
 }
 
 void Player::TakeDamage(const int& damage)

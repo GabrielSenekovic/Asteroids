@@ -53,6 +53,8 @@ protected:
 	float invincibilityFrame = 20;
 	float invincibilityFrameLimit = 20;
 
+	std::array<float, 3> masterColor = { 255, 255, 255 };
+
 	float scale;
 
 	std::random_device rd;

@@ -34,6 +34,7 @@ void Body::Build()
 void Body::Draw()
 {
 	if (!active) { return; }
+	glEnable(GL_LIGHTING);
 	glBegin(faces[0].drawMethod);
 	Color(faces[0].color);
 
@@ -85,6 +86,7 @@ void Body::Draw()
 		}
 	}
 	glEnd();
+	glDisable(GL_LIGHTING);
 }
 
 void Body::OnCollide(Entity& other)

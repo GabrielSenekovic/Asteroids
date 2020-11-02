@@ -25,7 +25,7 @@ Entity::Entity(EntityType type_in)
 		scale = 1;
 		position = { 0,0,0 };
 		speed = 2;
-		turnSpeed = 2;
+		turnSpeed = 1.5f;
 		life = 5;
 		break;
 	case EntityType::PerfectSphere: 
@@ -47,9 +47,9 @@ Entity::Entity(EntityType type_in)
 		velocity = { (float)(rand() % 40 -20), 0, (float)(rand() % 40 - 20) };
 		scale = 1;
 		position = GetValidStartPosition();
-		speed = 0;
+		speed = rand() % 3 + 2;
 		turnSpeed = 0;
-		acc = 0;
+		acc = 1;
 		life = 1;
 		break;
 		case EntityType::Laser:
@@ -79,7 +79,7 @@ void Entity::Build()
 bool Entity::Update(float dt)
 {
 	if (!active) { return true; }
-	invincibilityFrame += !IsVulnerable() ? invincibilityFrame : 0;
+	invincibilityFrame += !IsVulnerable() ? dt*6 : 0;
 	for (int i = 0; i < 3; i++)
 	{
 		position[i] += velocity[i] * acc * dt; //Moves ship forward
@@ -121,10 +121,10 @@ void Entity::CheckWorldBounds(int i)
 }
 std::array<float,3> Entity::GetValidStartPosition()
 {
-	int w[2] = { -1, 1 };
-	float x = (rand() % 250 + 250)*w[rand()%2];
+	int w[2] = { -10, 10 };
+	float x = rand() % 50 *w[rand()%2];
 	float y = 0;
-	float z = (rand() % 250 + 250)*w[rand()%2];
+	float z = rand() % 50 *w[rand()%2];
 	return { x,y,z };
 }
 
@@ -144,7 +144,7 @@ void Entity::Draw()
 	for (int i = 0; i < faces.size(); i++)
 	{
 		glBegin(faces[i].drawMethod);
-		Color(faces[i].color);
+		(int)invincibilityFrame % 2 == 0 && !IsVulnerable() ? Color(masterColor) : Color(faces[i].color);
 		for (int j = 0; j < faces[i].vertex.size(); j++)
 		{
 			std::array<float, 3> temp = *faces[i].vertex[j]; //Get vertices from the face
@@ -166,4 +166,5 @@ void Entity::TakeDamage(const int& damage)
 	if (!IsVulnerable()) { return; }
 	life -= damage;
 	active = life > 0;
+	invincibilityFrame = 0;
 }

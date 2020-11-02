@@ -11,12 +11,12 @@ protected:
 
 	int projectileIndex = 0;
 
+public:
 	std::vector<Projectile> projectiles;
 
-public:
 	Ship(EntityType type);
 
-	void OnUpdate(float dt) override;
+	bool OnUpdate(float dt) override;
 
 	void Build() override;
 

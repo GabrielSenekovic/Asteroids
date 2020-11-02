@@ -1,6 +1,6 @@
 #include "Entity.h"
 
-Entity::Face::Face(std::vector<std::vector<float>*>& a, std::vector<int>& color, int drawMethod): 
+Entity::Face::Face(std::vector<std::array<float, 3>*>& a, std::vector<int>& color, int drawMethod): 
 	vertex(a), drawMethod(drawMethod), color(color)
 {
 }
@@ -34,7 +34,7 @@ Entity::Entity(EntityType type_in)
 		//sectors 4 stacks 2 = 8 sided die
 		//5,4 also works
 		/*(5,3), (3,3), (3,2), (10,9), (4,8)*/
-		position = { 30, 0, 30 };
+		position = GetValidStartPosition();
 			//if you draw normally
 			//if you do GL_Polygon it turns into a cool helix kind of a thing
 			//if you do GL_TRIANGLES you get a cool windy effect
@@ -46,27 +46,28 @@ Entity::Entity(EntityType type_in)
 	case EntityType::ImperfectSphere: 
 		velocity = { (float)(rand() % 40 -20), 0, (float)(rand() % 40 - 20) };
 		scale = 1;
-		position = { 0, 0, 0 };
+		position = GetValidStartPosition();
 		speed = 0;
 		turnSpeed = 0;
-		acc = 1;
+		acc = 0;
 		life = 1;
 		break;
 		case EntityType::Laser:
 		{
 			active = false;
 			scale = 1;
-			speed = 100;
+			speed = 200;
 			vertex.push_back({ 0, 0, 0 });
 			vertex.push_back({ 0, 0, 20 });
 			position = { 0,0,0 };
 			velocity = { 0,0,0 };
-			std::vector<std::vector<float>*> temp = { &vertex[0],&vertex[1]};
+			std::vector<std::array<float, 3>*> temp = { &vertex[0],&vertex[1]};
 			std::vector<int> color = { 100, 255, 255 };
 			faces.push_back(Face(temp, color, GL_LINE_STRIP));
 			acc = 1;
+			col = new SphereCollider(0.5f);
 		}
-			break;
+		break;
 	}
 }
 
@@ -75,25 +76,27 @@ void Entity::Build()
 	
 }
 
-void Entity::Update(float dt)
+bool Entity::Update(float dt)
 {
-	if (!active) { return; }
+	if (!active) { return true; }
+	invincibilityFrame += !IsVulnerable() ? invincibilityFrame : 0;
 	for (int i = 0; i < 3; i++)
 	{
 		position[i] += velocity[i] * acc * dt; //Moves ship forward
 	}
-	OnUpdate(dt);
+	if (col != nullptr){col->position = position;}
+	return OnUpdate(dt);
 }
-void Entity::OnUpdate(float dt)
+bool Entity::OnUpdate(float dt)
 {
-
+	return true;
 }
 
 void Entity::CheckWorldBounds(int i)
 {
 	for (int j = 0; j < vertex.size(); j++)
 	{
-		std::vector<float> temp = vertex[j];
+		std::array<float, 3> temp = vertex[j];
 		for (int k = 0; k < 3; k++)
 		{
 			temp[k] += position[k];
@@ -116,9 +119,22 @@ void Entity::CheckWorldBounds(int i)
 		}
 	}
 }
+std::array<float,3> Entity::GetValidStartPosition()
+{
+	int w[2] = { -1, 1 };
+	float x = (rand() % 250 + 250)*w[rand()%2];
+	float y = 0;
+	float z = (rand() % 250 + 250)*w[rand()%2];
+	return { x,y,z };
+}
 
 void Entity::Rotate(float i, int axis)
 {
+}
+
+bool Entity::IsVulnerable()
+{
+	return invincibilityFrame >= invincibilityFrameLimit;
 }
 
 void Entity::Draw()
@@ -131,7 +147,7 @@ void Entity::Draw()
 		Color(faces[i].color);
 		for (int j = 0; j < faces[i].vertex.size(); j++)
 		{
-			std::vector<float> temp = *faces[i].vertex[j]; //Get vertices from the face
+			std::array<float, 3> temp = *faces[i].vertex[j]; //Get vertices from the face
 			for (int k = 0; k < temp.size(); k++)
 			{
 				temp[k] = temp[k] * scale + position[k]; //Move all variables of the vertex
@@ -140,4 +156,14 @@ void Entity::Draw()
 		}
 	}
 	glEnd();
+}
+void Entity::OnCollide(Entity& other)
+{
+
+}
+void Entity::TakeDamage(const int& damage)
+{
+	if (!IsVulnerable()) { return; }
+	life -= damage;
+	active = life > 0;
 }

@@ -10,7 +10,7 @@
 #include "Game.h"
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------
-Game::Game(): playerShip(), asteroid(Entity::EntityType::ImperfectSphere, 10, 10)
+Game::Game(): playerShip()
 {
 	mMtxFont = new char[128][7][5];
 	InitMtxFont();
@@ -21,6 +21,13 @@ Game::Game(): playerShip(), asteroid(Entity::EntityType::ImperfectSphere, 10, 10
     mQuadratic = gluNewQuadric();
     gluQuadricNormals(mQuadratic, GLU_SMOOTH);
     timeLastFrame = 0;
+
+    entities.push_back(&playerShip);
+    entities.push_back(new Body(Entity::EntityType::ImperfectSphere, 10, 10));
+    for (int i = 0; i < playerShip.projectiles.size(); i++)
+    {
+        entities.push_back(&playerShip.projectiles[i]);
+    }
 }
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------
@@ -108,18 +115,37 @@ void Game::ChangeCameraMode(CameraMode mode)
     }
 }
 //---------------------------------------------------------------------
-void Game::Update()
+bool Game::Update()
 {
     double time = double(SDL_GetTicks()) / 1000.;
     double dt = time - timeLastFrame;
+    bool play = true;
 
-    playerShip.Update(dt);
-    playerShip.CheckWorldBounds(maxDistanceFromOrigin);
-    asteroid.Update(dt);
-    asteroid.CheckWorldBounds(maxDistanceFromOrigin);
+    for (int i = 0; i < entities.size(); i++)
+    {
+        if (!entities[i]->Update(dt)) { return false; }
+        entities[i]->CheckWorldBounds(maxDistanceFromOrigin);
+    }
+    for (int i = 0; i < entities.size(); i++)
+    {
+        for (int j = i +1; j < entities.size(); j++)
+        {
+            if (!entities[i]->active || !entities[j]->active 
+                || entities[i]->col == nullptr || entities[j]->col == nullptr) {
+                continue;
+            }
+
+            if (collisionManager.CheckCollision(entities[i], entities[j]))
+            {
+                entities[i]->OnCollide(*entities[j]);
+                entities[j]->OnCollide(*entities[i]);
+            }
+        }
+    }
 
     KeyHeld();
     timeLastFrame = time;
+    return true;
 }
 //---------------------------------------------------------------------
 void Game::Draw(void) {
@@ -150,7 +176,7 @@ void Game::Draw(void) {
     if (debug) {DrawGrid();}
     playerShip.Draw();
     glEnable(GL_LIGHTING);
-    asteroid.Draw();
+    entities[1]->Draw();
 
     glDisable(GL_LIGHTING);
     DrawHUD();

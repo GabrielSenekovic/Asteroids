@@ -10,7 +10,7 @@ void Ship::Build()
 {
 }
 
-void Ship::OnUpdate(float dt)
+bool Ship::OnUpdate(float dt)
 {
 	if (shootTimer < shootTimerLimit)
 	{
@@ -20,6 +20,7 @@ void Ship::OnUpdate(float dt)
 	{
 		projectiles[i].Update(dt);
 	}
+	return true;
 }
 
 void Ship::Rotate(float i, int axis)

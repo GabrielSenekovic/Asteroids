@@ -11,7 +11,7 @@ Projectile::Projectile(EntityType type, int lifeTime) : Entity(type), lifeTimerL
 {
 }
 
-void Projectile::OnUpdate(float dt)
+bool Projectile::OnUpdate(float dt)
 {
 	if (lifeTimer < lifeTimerLimit)
 	{
@@ -23,6 +23,7 @@ void Projectile::OnUpdate(float dt)
 		lifeTimer = 0;
 		RotateStart(-rotationAngle, 1);
 	}
+	return true;
 }
 
 void Projectile::RotateStart(float i, int axis)

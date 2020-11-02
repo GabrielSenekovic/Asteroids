@@ -14,10 +14,14 @@
 #include <string>
 #include <iostream>
 #include "MatrixMath.h"
+#include "CollisionManager.h"
 //---------------------------------------------------------------------
 #define For(i,N) for (int (i) = 0; (i) < (N); (i)++)
 //---------------------------------------------------------------------
 class Game {
+
+    CollisionManager collisionManager;
+
     enum class CameraMode
     {
         ORTHOGRAPHIC,
@@ -32,7 +36,7 @@ public:
     void  ChangeSize(int w, int h);
     void  ChangeCameraMode(CameraMode mode);
     //-------------------------------------------------------
-    void  Update();
+    bool  Update();
     //-------------------------------------------------------
     void  Draw();
     void  DrawGrid();
@@ -70,7 +74,8 @@ public:
     char  (*mMtxFont)[7][5];
     //-------------------------------------------------------
     Player playerShip;
-    Body asteroid;
+
+    std::vector<Entity*> entities;
 };
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------

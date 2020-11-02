@@ -9,5 +9,10 @@ public:
 
 	void Build() override;
 
+	bool OnUpdate(float dt) override;
+
 	void Move(float i);
+	void Reset();
+
+	void TakeDamage(const int& damage) override;
 };

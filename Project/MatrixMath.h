@@ -1,6 +1,8 @@
 #ifndef MATRIXMATH_H
 #define MATRIXMATH_H
+
 #include <vector>
+#include <array>
 #include <cmath>
 
 namespace MMath
@@ -13,21 +15,25 @@ namespace MMath
 	std::vector<float> GetAverageColor(std::vector<float>, ...);
 
 	//Calculations only involving vectors
-	float Magnitude(std::vector<float> a, int b); //Length of the vector
-	float Distance(std::vector<float> a, std::vector<float> b);
-	std::vector<float> Normalize(std::vector<float> a);
-	float Area(std::vector<float> a, std::vector<float> b);
-	float Dot(std::vector<float> a, std::vector<float> b);
-	float GetAngle(std::vector<float> a, std::vector<float> b);
-	bool IsParallel(std::vector<float> a, std::vector<float> b); //if the cross product is vector 0, then theyre parallel
-	std::vector<float> Cross(std::vector<float> a, std::vector<float> b); //Get third perpendcular with this
+	float Magnitude(const std::array<float,3> a, int b); //Length of the vector
+	float Distance(std::array<float,3> a, std::array<float,3> b);
+	std::array<float,3> Normalize(std::array<float,3> a);
+	float Area(std::array<float, 3> a, std::array<float, 3> b);
+	float Dot(std::array<float,3> a, std::array<float,3> b);
+	float GetAngle(std::array<float,3> a, std::array<float,3> b);
+	bool IsParallel(std::array<float,3> a, std::array<float,3> b); //if the cross product is vector 0, then theyre parallel
+	std::array<float,3> Cross(std::array<float,3> a, std::array<float,3> b); //Get third perpendcular with this
 
 	//Calculations involving matrices
 	std::vector<float> MultiplyByScalar(std::vector<float> a, float b);
+	std::array<float,3> MultiplyByScalar(std::array<float,3> a, float b);
 	std::vector<float> DivideByScalar(std::vector<float> a, float b);
+	std::array<float,3> DivideByScalar(std::array<float,3> a, float b);
 	std::vector<float> MatrixAddition(std::vector<float> a, std::vector<float> b);
+	std::array<float,3> MatrixAddition(std::array<float,3> a, std::array<float,3> b);
 	std::vector<float> MatrixSubtraction(std::vector<float> a, std::vector<float> b);
+	std::array<float,3> MatrixSubtraction(std::array<float,3> a, std::array<float,3> b);
 	std::vector<float> MatrixMultiplication(std::vector<float> a, std::vector<float> b, int a_rows, int b_cols);
+	std::array<float,3> MatrixMultiplication(std::array<float,3> a, std::vector<float> b, int a_rows, int b_cols);
 }
-
 #endif

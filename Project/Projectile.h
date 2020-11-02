@@ -11,7 +11,7 @@ public:
 	Projectile(const Projectile&);
 	Projectile(EntityType type, int lifeTime);
 
-	void OnUpdate(float dt) override;
+	bool OnUpdate(float dt) override;
 
 	void RotateStart(float i, int axis);
 	void Draw() override;

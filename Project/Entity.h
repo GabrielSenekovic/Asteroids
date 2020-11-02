@@ -2,12 +2,14 @@
 #define ENTITY_H
 
 #include <vector>
+#include <array>
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include "Macros.h"
 #include <cmath>
 #include "MatrixMath.h"
 #include <random>
+#include "Collider.h"
 
 using namespace MMath;
 
@@ -21,8 +23,8 @@ public:
 		ImperfectSphere,
 		Laser
 	};
-	std::vector<float> position;
-	std::vector<float> direction;
+	std::array<float, 3> position;
+	std::array<float, 3> direction;
 
 	float turnSpeed; float rotationAngle = 0;
 	float acc = 0;
@@ -30,25 +32,28 @@ public:
 	bool active = true;
 	std::vector<float> velocity;
 	float speed;
+	EntityType type;
+	Collider* col = nullptr;
 
 protected:
 
 	struct Face
 	{
-		std::vector<std::vector<float>*> vertex; //list of vectors 
+		std::vector<std::array<float, 3>*> vertex; //list of vectors 
 		std::vector<float> normal;
 		int drawMethod;
 		std::vector<int> color;
 
-		Face(std::vector<std::vector<float>*>& a, std::vector<int>& color, int drawMethod);
+		Face(std::vector<std::array<float, 3>*>& a, std::vector<int>& color, int drawMethod);
 	};
 
-	std::vector<std::vector<float>> vertex;
+	std::vector<std::array<float, 3>> vertex;
 	std::vector<Face> faces;
 
-	float scale;
+	float invincibilityFrame = 20;
+	float invincibilityFrameLimit = 20;
 
-	EntityType type;
+	float scale;
 
 	std::random_device rd;
 
@@ -57,9 +62,16 @@ public:
 	Entity(EntityType type);
 	virtual void Build();
 
-	void Update(float dt); virtual void OnUpdate(float dt);
+	bool Update(float dt); virtual bool OnUpdate(float dt);
 	void CheckWorldBounds(int i);
 	virtual void Rotate(float i, int axis);
+
+	std::array<float, 3> GetValidStartPosition();
+
+	bool IsVulnerable();
+
+	virtual void OnCollide(Entity& other);
+	virtual void TakeDamage(const int& damage);
 
 	virtual void Draw();
 };

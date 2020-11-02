@@ -25,9 +25,10 @@ void Body::Build()
 			vertex.push_back({ (r + x) * cos(phi) * cos(thet), (r + y) * cos(phi) * sin(thet), (r + z) * sin(phi) });
 		}
 	}
-	std::vector<std::vector<float>*> temp = { &vertex[0],&vertex[1],&vertex[2] }; //change later
+	std::vector<std::array<float,3>*> temp = { &vertex[0],&vertex[1],&vertex[2] }; //change later
 	std::vector<int> color = { 0, 255, 0 };
 	faces.push_back(Face(temp, color, GL_QUADS));
+	col = new SphereCollider(r);
 }
 
 void Body::Draw()
@@ -42,15 +43,15 @@ void Body::Draw()
 		float y = i + stacks + 2 < vertex.size() ? vertex[i][1] - vertex[i + stacks + 2][1] : 0;
 		float z = i + stacks + 2 < vertex.size() ? vertex[i][2] - vertex[i + stacks + 2][2] : 0;
 
-		std::vector<float> temp1 = { x,y,z };
+		std::array<float,3> temp1 = { x,y,z };
 
 		x = i + stacks + 1 < vertex.size() ? vertex[i + 1][0] - vertex[i + stacks + 1][0] : 0;
 		y = i + stacks + 1 < vertex.size() ? vertex[i + 1][1] - vertex[i + stacks + 1][1] : 0;
 		z = i + stacks + 1 < vertex.size() ? vertex[i + 1][2] - vertex[i + stacks + 1][2] : 0;
 
-		std::vector<float> temp2 = { x,y,z };
+		std::array<float,3> temp2 = { x,y,z };
 
-		std::vector<float> temp3 = Normalize(Cross(temp2, temp1));
+		std::array<float,3> temp3 = Normalize(Cross(temp2, temp1));
 
 		glNormal3f(temp3[0], temp3[1], temp3[2]);
 
@@ -84,4 +85,14 @@ void Body::Draw()
 		}
 	}
 	glEnd();
+}
+
+void Body::OnCollide(Entity& other)
+{
+	switch (other.type)
+	{
+		case EntityType::PlayerShip: other.TakeDamage(1); break;
+		case EntityType::ImperfectSphere: break;
+		case EntityType::Laser: TakeDamage(1); break;
+	}
 }

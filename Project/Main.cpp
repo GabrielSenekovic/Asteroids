@@ -77,7 +77,7 @@ static void mainLoop (){
 			}
         }
         //----------------------------------
-		G.Update();
+		quit = !G.Update();
 		G.Draw();
         SDL_GL_SwapWindow(gScreen);
         SDL_Delay(8);

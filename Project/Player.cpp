@@ -9,6 +9,7 @@ Player::Player():Ship(EntityType::PlayerShip)
 		projectiles.push_back(Projectile(EntityType::Laser, 5));
 	}
 	shootTimerLimit = (float)projectiles[0].lifeTimerLimit / projectiles.size();
+	col = new SphereCollider(0.7f);
 }
 
 void Player::Build()
@@ -16,9 +17,15 @@ void Player::Build()
 	vertex.push_back({ 1,0,-1.5f });
 	vertex.push_back({ -1,0,-1.5f });
 	vertex.push_back({ 0,0,3 });
-	std::vector<std::vector<float>*> temp = { &vertex[0],&vertex[1],&vertex[2] };
+	std::vector<std::array<float,3>*> temp = { &vertex[0],&vertex[1],&vertex[2] };
 	std::vector<int> color = { 255, 0, 0 };
 	faces.push_back(Face(temp, color,GL_TRIANGLES));
+}
+
+bool Player::OnUpdate(float dt)
+{
+	Ship::OnUpdate(dt);
+	return life > 0;
 }
 
 void Player::Move(float i)
@@ -31,4 +38,17 @@ void Player::Move(float i)
 		: i * accForce * 3 * !isTooFast; //if going in the other direction, deaccelerate
 
 	UpdateVelocity();
+}
+
+void Player::Reset()
+{
+	position = { 0,0,0 };
+	acc = 0;
+}
+
+void Player::TakeDamage(const int& damage)
+{
+	if (!IsVulnerable()) { return; }
+	life -= damage;
+	Reset();
 }
